@@ -1,16 +1,17 @@
 package com.example.todoapp;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
+@Table(name = "tasks")
 public class Task {
 
     private String description;
     private boolean taskCompleted;
-    private @GeneratedValue @Id Long id;
+    @GeneratedValue
+    @Id
+    private Long id;
 
     public Task(String description, Long id){
         this.description = description;

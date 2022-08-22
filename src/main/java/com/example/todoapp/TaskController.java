@@ -1,50 +1,42 @@
 package com.example.todoapp;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
+@RequestMapping("/todo")
 public class TaskController {
 
-    private final TaskRepository repository;
-
-    public TaskController(TaskRepository repository){
-        this.repository = repository;
+    private final TaskService service;
+    @Autowired
+    public TaskController(TaskService service){
+        this.service = service;
     }
 
-    @PostMapping("/TODO")
+    @PostMapping("")
     public Task createTask(@RequestBody Task newTask){
-        return repository.save(newTask);
+        return service.saveTask(newTask);
     }
 
-    @GetMapping("/TODO/{id}")
+    @GetMapping("/{id}")
     public Task getTaskById(@PathVariable Long id){
-        return repository.findById(id)
-                .orElseThrow(() -> new TaskNotFoundException(id));
+        return service.getTaskById(id);
     }
 
-    @GetMapping("/TODO")
+    @GetMapping("")
     public List<Task> getAllTasks(){
-        List<Task> response = repository.findAll();
-        if(response.size() == 0){
-            throw new NoTasksAvailableException();
-        }
-        return response;
+        return service.getAllTasks();
     }
 
-    @PutMapping("/TODO/{id}/complete")
+    @PutMapping("/{id}/complete")
     public Task completeTask(@PathVariable Long id){
-        Optional<Task> response = repository.findById(id);
-        Task task = response.orElseThrow(() -> new TaskNotFoundException(id));
-        task.setTaskCompletion(true);
-        return repository.save(task);
+        return service.completeTask(id);
     }
 
-    @DeleteMapping("/TODO/{id}")
+    @DeleteMapping("/{id}")
     public void deleteTask(@PathVariable Long id){
-        repository.findById(id).orElseThrow(() -> new TaskNotFoundException(id));
-        repository.deleteById(id);
+        service.deleteTask(id);
     }
 }
