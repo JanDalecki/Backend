@@ -1,12 +1,10 @@
 package com.example.todoapp;
 
 import org.springframework.context.annotation.Configuration;
-
 import java.util.List;
-import java.util.Optional;
 
 @Configuration
-public class TaskService {
+public class    TaskService {
 
     private final TaskRepository repository;
 
@@ -19,15 +17,14 @@ public class TaskService {
     }
 
     public void deleteTask(Long id){
-        repository.findById(id).orElseThrow(() -> new TaskNotFoundException(id));
-        repository.deleteById(id);
+        Task taskToDelete = repository.findById(id).orElseThrow(() -> new TaskNotFoundException(id));
+        repository.delete(taskToDelete);
     }
 
     public Task completeTask(Long id){
-        Optional<Task> response = repository.findById(id);
-        Task task = response.orElseThrow(() -> new TaskNotFoundException(id));
+        Task task = repository.findById(id).orElseThrow(() -> new TaskNotFoundException(id));
         task.setTaskCompletion(true);
-        return repository.save(task);
+        return task;
     }
 
     public List<Task> getAllTasks(){
@@ -42,5 +39,4 @@ public class TaskService {
         return repository.findById(id)
                 .orElseThrow(() -> new TaskNotFoundException(id));
     }
-
 }
