@@ -10,9 +10,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 
-import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -20,7 +18,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(controllers = TaskController.class)
 @ActiveProfiles("testing")
 public class ControllerServiceTests {
-
     @Autowired
     MockMvc mockMvc;
     @MockBean
@@ -38,8 +35,7 @@ public class ControllerServiceTests {
         mockMvc.perform(post("/todo/")
                 .contentType("application/json")
                 .content(contentBody))
-                .andReturn();
-
+                .andExpect(status().isOk());
     }
     @Test
     @DisplayName("Not Found status when repository is empty")
