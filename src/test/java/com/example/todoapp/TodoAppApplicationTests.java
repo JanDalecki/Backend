@@ -1,16 +1,14 @@
 package com.example.todoapp;
 
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -22,18 +20,22 @@ class TodoAppApplicationTests {
 
 	@Autowired
 	MockMvc mvc;
+	@Autowired
+	TaskRepository repository;
 
 	@Autowired
 	TaskController controller;
 
-	@Test
-	@Order(1)
-	void exceptionWhenRepositoryIsEmpty() throws Exception {
-		mvc.perform(get("/todo/")).andExpect(status().isNotFound());
+	@AfterEach
+	void after(){
+		repository.deleteAll();
 	}
 
 	@Test
-	@Order(2)
+	void exceptionWhenRepositoryIsEmpty() throws Exception {
+		mvc.perform(get("/todo/")).andExpect(status().isNotFound());
+	}
+	@Test
 	void createAndDeleteNewTask() throws Exception {
 
 		String contentBody = "{\"description\" : \"First Task\"}";
@@ -44,9 +46,6 @@ class TodoAppApplicationTests {
 				.andExpectAll(
 						status().isOk(),
 						content().contentType("application/json"));
-
-		mvc.perform(delete("/todo/1")).andExpect(status().isOk());
-
 	}
 
 	@Test
@@ -59,12 +58,28 @@ class TodoAppApplicationTests {
 	}
 	@Test
 	void completingTask() throws Exception {
-		String contentBody = "{\"description\" : \"Second Task\"}";
+		String contentBody = "{\"description\" : \"Some Task\"}";
 
 		mvc.perform(post("/todo/")
 				.contentType("application/json")
 				.content(contentBody));
-		mvc.perform(put("/todo/2/complete")).andExpectAll(
-				status().isOk());
+		MvcResult result = mvc.perform(put("/todo/3/complete")).andExpect(status().isOk()).andReturn();
+		String content = result.getResponse().getContentAsString();
+		assertThat(content).matches(".*\"completed\":true.*");
+	}
+
+	@Test
+	void deletingTask() throws Exception {
+		String contentBody = "{\"description\" : \"Sample Task\"}";
+
+		mvc.perform(post("/todo/")
+				.contentType("application/json")
+				.content(contentBody));
+		mvc.perform(get("/todo/2")).andExpect(status().isOk());
+
+		mvc.perform(delete("/todo/2"))
+				.andExpect(status().isOk());
+		mvc.perform(get("/todo/"))
+				.andExpect(status().isNotFound());
 	}
 }

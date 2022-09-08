@@ -4,7 +4,7 @@ import org.springframework.context.annotation.Configuration;
 import java.util.List;
 
 @Configuration
-public class    TaskService {
+public class TaskService {
 
     private final TaskRepository repository;
 
