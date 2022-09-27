@@ -23,6 +23,7 @@ public class TaskService {
     public Task completeTask(Long id, boolean completion){
         Task task = repository.findById(id).orElseThrow(() -> new TaskNotFoundException(id));
         task.setTaskCompletion(completion);
+        repository.save(task);
         return task;
     }
 
