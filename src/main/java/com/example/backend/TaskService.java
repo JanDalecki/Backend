@@ -1,4 +1,4 @@
-package com.example.todoapp;
+package com.example.backend;
 
 import org.springframework.context.annotation.Configuration;
 import java.util.List;
@@ -20,10 +20,9 @@ public class TaskService {
         Task taskToDelete = repository.findById(id).orElseThrow(() -> new TaskNotFoundException(id));
         repository.delete(taskToDelete);
     }
-
-    public Task completeTask(Long id){
+    public Task completeTask(Long id, boolean completion){
         Task task = repository.findById(id).orElseThrow(() -> new TaskNotFoundException(id));
-        task.setTaskCompletion(true);
+        task.setTaskCompletion(completion);
         return task;
     }
 

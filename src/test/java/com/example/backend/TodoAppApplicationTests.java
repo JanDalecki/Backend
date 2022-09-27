@@ -1,5 +1,6 @@
-package com.example.todoapp;
+package com.example.backend;
 
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -10,8 +11,7 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -56,6 +56,7 @@ class TodoAppApplicationTests {
 	void exceptionWhenGettingUnknownTask() throws Exception {
 		mvc.perform(get("/todo/42")).andExpect(status().isNotFound());
 	}
+
 	@Test
 	void completingTask() throws Exception {
 		String contentBody = "{\"description\" : \"Some Task\"}";
@@ -63,7 +64,9 @@ class TodoAppApplicationTests {
 		mvc.perform(post("/todo/")
 				.contentType("application/json")
 				.content(contentBody));
-		MvcResult result = mvc.perform(put("/todo/3/complete")).andExpect(status().isOk()).andReturn();
+		MvcResult result = mvc.perform(put("/todo/3/completion/true")).andExpect(status().isOk())
+				.andExpect(jsonPath("$.completed", Matchers.is(true)))
+				.andReturn();
 		String content = result.getResponse().getContentAsString();
 		assertThat(content).matches(".*\"completed\":true.*");
 	}

@@ -1,4 +1,4 @@
-package com.example.todoapp;
+package com.example.backend;
 
 
 import jdk.jfr.Description;
@@ -33,6 +33,7 @@ public class TaskServiceTests {
         final var returnedTask = service.getTaskById(1L);
         Assertions.assertEquals(returnedTask, expectedTask);
     }
+
     @Test
     @Description("Should throw TaskNotFoundException")
     void gettingNonexistentTaskById() {
@@ -57,10 +58,17 @@ public class TaskServiceTests {
     void completingTasks() {
         Task firstTask = new Task("First task", 1L);
         when(repository.findById(1L)).thenReturn(Optional.of(firstTask));
-        service.completeTask(1L);
+        service.completeTask(1L, true);
         Assertions.assertTrue(firstTask.isCompleted());
     }
-
+    @Test
+    @Description("Should complete task")
+    void uncompletingTasks() {
+        Task firstTask = new Task("First task", 1L);
+        when(repository.findById(1L)).thenReturn(Optional.of(firstTask));
+        service.completeTask(1L, false);
+        Assertions.assertFalse(firstTask.isCompleted());
+    }
     @Test
     void saveTaskTest() {
         Task newTask = new Task("Example task");

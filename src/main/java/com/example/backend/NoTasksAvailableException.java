@@ -1,4 +1,4 @@
-package com.example.todoapp;
+package com.example.backend;
 
 public class NoTasksAvailableException extends RuntimeException {
     public NoTasksAvailableException(){

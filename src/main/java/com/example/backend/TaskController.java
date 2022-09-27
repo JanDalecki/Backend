@@ -1,7 +1,6 @@
-package com.example.todoapp;
+package com.example.backend;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,14 +25,16 @@ public class TaskController {
 
     @GetMapping("")
     public List<Task> getAllTasks() {
-
         return service.getAllTasks();
     }
 
-    @PutMapping("/{id}/complete")
+    @PutMapping("/{id}/completion/true")
     public Task completeTask(@PathVariable Long id) {
-
-        return service.completeTask(id);
+        return service.completeTask(id, true);
+    }
+    @PutMapping("/{id}/completion/false")
+    public Task uncompleteTask(@PathVariable Long id) {
+        return service.completeTask(id, false);
     }
     @DeleteMapping("/{id}")
     public void deleteTask(@PathVariable Long id){

@@ -1,4 +1,4 @@
-package com.example.todoapp;
+package com.example.backend;
 
 import javax.persistence.*;
 import java.util.Objects;
