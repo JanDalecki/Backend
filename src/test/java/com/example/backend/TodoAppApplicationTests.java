@@ -12,7 +12,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
+import org.intellij.lang.annotations.Language;
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("testing")
@@ -38,7 +38,9 @@ class TodoAppApplicationTests {
 	@Test
 	void createAndDeleteNewTask() throws Exception {
 
-		String contentBody = "{\"description\" : \"First Task\"}";
+		@Language("json") String contentBody = "{\n" +
+				"  \"description\": \"First Task\"\n" +
+				"}";
 
 		mvc.perform(post("/todo/")
 						.contentType("application/json")
@@ -59,7 +61,9 @@ class TodoAppApplicationTests {
 
 	@Test
 	void completingTask() throws Exception {
-		String contentBody = "{\"description\" : \"Some Task\"}";
+		@Language("json") String contentBody = "{\n" +
+				"  \"description\" : \"Some Task\"\n" +
+				"}";
 
 		mvc.perform(post("/todo/")
 				.contentType("application/json")
@@ -73,7 +77,9 @@ class TodoAppApplicationTests {
 
 	@Test
 	void deletingTask() throws Exception {
-		String contentBody = "{\"description\" : \"Sample Task\"}";
+		@Language("json") String contentBody = "{\n" +
+				"  \"description\" : \"Sample Task\"\n" +
+				"}";
 
 		mvc.perform(post("/todo/")
 				.contentType("application/json")
