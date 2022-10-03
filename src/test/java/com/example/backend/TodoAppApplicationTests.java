@@ -13,6 +13,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import org.intellij.lang.annotations.Language;
+import org.springframework.test.web.servlet.ResultActions;
+
+import java.io.UnsupportedEncodingException;
+
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("testing")
@@ -36,7 +40,7 @@ class TodoAppApplicationTests {
 		mvc.perform(get("/todo/")).andExpect(status().isNotFound());
 	}
 	@Test
-	void createAndDeleteNewTask() throws Exception {
+	void createNewTask() throws Exception {
 
 		@Language("json") String contentBody = "{\n" +
 				"  \"description\": \"First Task\"\n" +
@@ -65,10 +69,14 @@ class TodoAppApplicationTests {
 				"  \"description\" : \"Some Task\"\n" +
 				"}";
 
-		mvc.perform(post("/todo/")
+		final var mvcResult = mvc.perform(post("/todo/")
 				.contentType("application/json")
-				.content(contentBody));
-		MvcResult result = mvc.perform(put("/todo/3/completion/true")).andExpect(status().isOk())
+				.content(contentBody))
+				.andReturn();
+
+		int id = calculateId(mvcResult);
+
+		MvcResult result = mvc.perform(put("/todo/" + id +"/completion/true")).andExpect(status().isOk())
 				.andExpect(jsonPath("$.completed", Matchers.is(true)))
 				.andReturn();
 		String content = result.getResponse().getContentAsString();
@@ -81,14 +89,25 @@ class TodoAppApplicationTests {
 				"  \"description\" : \"Sample Task\"\n" +
 				"}";
 
-		mvc.perform(post("/todo/")
-				.contentType("application/json")
-				.content(contentBody));
-		mvc.perform(get("/todo/2")).andExpect(status().isOk());
+		final var mvcResult = mvc.perform(post("/todo/")
+						.contentType("application/json")
+						.content(contentBody))
+				.andReturn();
 
-		mvc.perform(delete("/todo/2"))
+
+		int id = calculateId(mvcResult);
+
+		mvc.perform(get("/todo/" + id)).andExpect(status().isOk());
+
+		mvc.perform(delete("/todo/" + id))
 				.andExpect(status().isOk());
 		mvc.perform(get("/todo/"))
 				.andExpect(status().isNotFound());
+	}
+
+	int calculateId(MvcResult mvcResult) throws UnsupportedEncodingException {
+		String body = mvcResult.getResponse().getContentAsString();
+		int index = body.indexOf("\"id\":") + 5;
+		return Integer.parseInt(body.substring(index, index+1));
 	}
 }
