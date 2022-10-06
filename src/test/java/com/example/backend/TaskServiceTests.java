@@ -28,7 +28,7 @@ public class TaskServiceTests {
 
     @Test
     void gettingTasksById() {
-        final var expectedTask = new Task("Example task", 1L);
+        final var expectedTask = TaskBuilder.generateTask().withRandomDescription().withRandomId().build();
         when(repository.findById(1L)).thenReturn(Optional.of(expectedTask));
         final var returnedTask = service.getTaskById(1L);
         Assertions.assertEquals(returnedTask, expectedTask);
@@ -42,8 +42,8 @@ public class TaskServiceTests {
     @Test
     @Description("Should return all tasks")
     void gettingAllTask() {
-        Task firstTask = new Task("First task", 1L);
-        Task secondTask = new Task("Second task", 2L);
+        Task firstTask = TaskBuilder.generateTask().with("Some Task").withRandomId().build();
+        Task secondTask = TaskBuilder.generateTask().withRandomDescription().with(2L).build();
         when(repository.findAll()).thenReturn(List.of(firstTask, secondTask));
         List<Task> tasks = service.getAllTasks();
         assertThat(tasks).hasSize(2).containsExactly(firstTask, secondTask);
@@ -56,29 +56,30 @@ public class TaskServiceTests {
     @Test
     @Description("Should complete task")
     void completingTasks() {
-        Task firstTask = new Task("First task", 1L);
+        Task firstTask = TaskBuilder.generateTask().withRandomDescription().with(1L).build();
         when(repository.findById(1L)).thenReturn(Optional.of(firstTask));
         service.completeTask(1L, true);
         Assertions.assertTrue(firstTask.isCompleted());
     }
+
     @Test
-    @Description("Should complete task")
+    @Description("Should uncomplete task")
     void uncompletingTasks() {
-        Task firstTask = new Task("First task", 1L);
+        Task firstTask = TaskBuilder.generateTask().withRandomDescription().with(1L).build();
         when(repository.findById(1L)).thenReturn(Optional.of(firstTask));
         service.completeTask(1L, false);
         Assertions.assertFalse(firstTask.isCompleted());
     }
     @Test
     void saveTaskTest() {
-        Task newTask = new Task("Example task");
+        Task newTask = TaskBuilder.generateTask().withRandomDescription().withRandomId().build();
         service.saveTask(newTask);
         verify(repository).save(newTask);
     }
 
     @Test
     void deleteTaskTest() {
-        Task newTask = new Task("Example task");
+        Task newTask = TaskBuilder.generateTask().withRandomDescription().withRandomId().build();
         when(repository.findById(newTask.getId())).thenReturn(Optional.of(newTask));
         service.deleteTask(newTask.getId());
         verify(repository).delete(newTask);
