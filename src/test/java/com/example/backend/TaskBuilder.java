@@ -3,37 +3,35 @@ package com.example.backend;
 import java.util.Random;
 
 public class TaskBuilder {
-
-    Task task;
     String description;
     Long id;
-    static Random random = new Random();
 
     boolean completed;
+    static Random random = new Random();
 
     private TaskBuilder(){
         description = "Sample Task";
         id = 1L;
-        task = new Task(description, id);
+        completed = false;
     };
 
     public TaskBuilder with(String description){
-        task.changeDescription(description);
+        this.description = description;
         return this;
     }
 
     public TaskBuilder with(Long id){
-        task.setId(id);
+        this.id = id;
         return this;
     }
 
-    public TaskBuilder with(boolean completed){
-        task.setTaskCompletion(completed);
+    public TaskBuilder with(boolean completion){
+        this.completed = completion;
         return this;
     }
 
     public TaskBuilder withRandomId(){
-        task.setId(Math.abs(random.nextLong()));
+        id = Math.abs(random.nextLong());
         return this;
     }
 
@@ -45,12 +43,12 @@ public class TaskBuilder {
         for (int i = 0; i < length; ++i)
             buff[i] = (char) (random.nextInt(126 - 33) + 33);
 
-        task.changeDescription(new String(buff));
+        description = new String(buff);
         return this;
     }
 
     public Task build(){
-        return task;
+        return new Task(description, id, completed);
     }
 
     public static TaskBuilder generateTask(){

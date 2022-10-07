@@ -12,8 +12,8 @@ public class TaskService {
         this.repository = repository;
     }
 
-    public Task saveTask(Task taskToSave){
-        return repository.save(taskToSave);
+    public Task saveTask(Task task){
+        return repository.save(task);
     }
 
     public void deleteTask(Long id){
@@ -22,7 +22,7 @@ public class TaskService {
     }
     public Task completeTask(Long id, boolean completion){
         Task task = repository.findById(id).orElseThrow(() -> new TaskNotFoundException(id));
-        task.setTaskCompletion(completion);
+        task.setCompleted(completion);
         repository.save(task);
         return task;
     }

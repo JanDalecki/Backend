@@ -1,7 +1,6 @@
 package com.example.backend;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,18 +9,18 @@ import java.util.List;
 @CrossOrigin(origins = "http://127.0.0.1:5173")
 @RestController
 @RequestMapping("/todo")
+@Log4j2
 public class TaskController {
     private final TaskService service;
-    private final Logger log = LogManager.getLogger();
     @Autowired
     public TaskController(TaskService service){
         log.info("Controller created");
         this.service = service;
     }
     @PostMapping("")
-    public Task createTask(@RequestBody Task newTask){
+    public Task createTask(@RequestBody Task task){
         log.info("Create task");
-        return service.saveTask(newTask);
+        return service.saveTask(task);
     }
 
     @GetMapping("/{id}")
